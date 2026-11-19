@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>标题｜副标题（16:9）</title>
+<!--
+  novo-html 模板：新魔方 AI4S 风格 16:9 单页 HTML。
+  占位符用 {{...}} 标注，替换后删除注释块。
+  版式规则见 SKILL.md，务必读完再改。
+-->
+<style>
+  :root{
+    --paper:#FFFFFF;
+    --card:#F4F4F1;
+    --card-2:#FFFFFF;
+    --ink:#12140F;
+    --muted:#66695F;
+    --faint:#93968B;
+    --line:#E6E5DF;
+    --line-2:#D2D0C7;
+    --red:#DD4A2A;
+    --red-soft:#FBEAE4;
+    --amber:#C07A18;
+    --amber-soft:#FAF0DC;
+    --green:#1E3B31;
+    --green-soft:#EAF2ED;
+    --green-line:#B9D2C4;
+    --sans:"PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",sans-serif;
+    --mono:"SF Mono","Menlo","Consolas",monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#ECEDEA;}
+  body{display:grid;place-items:center;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased;}
+  .stage{width:1600px;height:900px;transform-origin:center center;}
+  .slide{
+    width:1600px;height:900px;background:var(--paper);position:relative;overflow:hidden;
+    padding:28px 44px 6px;display:flex;flex-direction:column;
+    box-shadow:0 22px 70px rgba(20,22,17,.10);
+  }
+  /* 点阵纹理：整页统一的纸感，别加别的大面积纹理 */
+  .slide::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(rgba(20,22,15,.05) .9px, transparent .9px);
+    background-size:24px 24px;opacity:.5;
+  }
+  .slide > *{position:relative;z-index:1;}
+
+  /* ---------- 品牌角标 ---------- */
+  .brand{position:absolute;top:28px;right:44px;display:flex;align-items:center;}
+  .brand img{display:block;height:30px;width:auto;}
+
+  /* ---------- 页眉 ---------- */
+  header{height:102px;flex:0 0 102px;}
+  .eyebrow{display:flex;align-items:center;gap:10px;font-size:12.5px;letter-spacing:.2em;color:var(--muted);font-weight:600;}
+  .eyebrow b{color:var(--red);font-weight:600;}
+  .eyebrow .bar{width:24px;height:2px;background:var(--red);display:inline-block;}
+  h1{margin:9px 0 7px;font-size:33px;line-height:1.1;letter-spacing:-1px;font-weight:800;}
+  h1 em{font-style:normal;color:var(--red);}
+  .sub-wrap{width:948px;}
+  .sub{font-size:14.5px;line-height:1.5;color:#3B3E36;letter-spacing:.01em;margin:0;}
+  .sub b{color:var(--red);font-weight:600;}
+  .rule{width:948px;height:2px;background:var(--green);border-radius:2px;margin-top:8px;opacity:.92;}
+
+  /* ---------- 流程条 ---------- */
+  .flow-strip{
+    flex:0 0 68px;height:68px;margin-top:8px;background:var(--card);border:1px solid var(--line);
+    border-radius:14px;padding:11px 16px;display:flex;align-items:center;gap:8px;
+  }
+  .fs-label{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;padding-right:14px;border-right:1px solid var(--line-2);}
+  .fs-label span{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--red);}
+  .fs-label strong{font-size:13.5px;font-weight:700;letter-spacing:.02em;}
+  .fs-steps{flex:1;display:flex;align-items:center;gap:5px;}
+  .fs{flex:1;min-width:0;background:var(--card-2);border:1px solid var(--line);border-radius:9px;padding:6px 9px;}
+  .fs.bad{border-color:#E4C6A9;background:#FDF7F0;}
+  .fs .fs-t{font-size:12.5px;font-weight:600;line-height:1.25;display:flex;align-items:center;gap:5px;}
+  .fs .fs-d{font-size:11.5px;color:var(--muted);line-height:1.3;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .tag-b{font-size:10px;line-height:1;color:#8A6A45;background:#fff;border:1px solid #E4C6A9;border-radius:20px;padding:2px 5px;font-weight:500;}
+  .fs-arrow{flex:0 0 auto;color:var(--line-2);font-size:13px;line-height:1;}
+  .fs-loop{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:1px;margin-left:6px;color:var(--green);}
+  .fs-loop span{font-size:10.5px;letter-spacing:.02em;font-weight:600;}
+  .fs-loop svg{width:16px;height:16px;}
+
+  /* ---------- 标签胶囊 ---------- */
+  .pill{font-style:normal;font-size:11px;line-height:1;letter-spacing:.04em;padding:3px 7px;
+    border-radius:20px;border:1px solid var(--line-2);color:var(--muted);background:#fff;font-weight:600;white-space:nowrap;}
+  .pill.mid{border-color:#E4C6A9;background:#FBEFE2;color:#9A5A12;}
+  .pill.gov{border-color:#B9D2C4;background:var(--green-soft);color:#1E3B31;font-size:12px;font-weight:700;padding:4px 10px;}
+  .pill.key{border-color:var(--green);background:var(--green);color:#EDF4EF;}
+  .sec-t .pill{align-self:center;transform:translateY(-1px);}
+
+  /* ---------- 主体两栏 ---------- */
+  .body{flex:1;min-height:0;margin-top:12px;display:grid;grid-template-columns:444px 1fr;gap:16px;}
+  .col-left{display:flex;flex-direction:column;min-height:0;}
+  .col-right{display:flex;flex-direction:column;gap:12px;min-height:0;}
+
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex:0 0 auto;}
+  .sec-t{display:flex;align-items:baseline;gap:8px;font-size:17px;font-weight:700;letter-spacing:-.2px;}
+  .sec-t span{font-family:var(--mono);font-size:12px;color:var(--red);letter-spacing:.08em;font-weight:600;}
+  .sec-n{font-size:12px;color:var(--faint);}
+
+  /* ---------- 数字卡 ---------- */
+  .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:8px 11px 9px;}
+  .stat b{display:block;font-size:38px;line-height:1;font-weight:800;letter-spacing:-1.5px;}
+  .stat b small{font-size:13.5px;font-weight:500;letter-spacing:0;margin-left:2px;color:var(--muted);}
+  .stat p{margin:4px 0 0;font-size:13px;color:var(--muted);line-height:1.3;}
+
+  /* ---------- 阶段时间轴 ---------- */
+  .stages{margin-top:10px;flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;padding-left:34px;position:relative;}
+  .stages::before{content:"";position:absolute;left:9px;top:16px;bottom:16px;width:1px;background:var(--line-2);}
+  .stage-row{position:relative;display:flex;flex-direction:column;justify-content:center;}
+  .stage-row .num{
+    position:absolute;left:-34px;top:50%;transform:translateY(-50%);
+    width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
+    font-family:var(--mono);font-size:9.5px;background:var(--paper);
+    border:1px solid var(--line-2);color:var(--muted);z-index:1;
+  }
+  /* 默认全部深绿：一页里别用多种圆点颜色 */
+  .stage-row.t .num,.stage-row.b .num,.stage-row.a .num{background:var(--green);border-color:var(--green);color:#EDF4EF;}
+  .stage-row h3{margin:0;font-size:16px;font-weight:650;line-height:1.25;display:flex;align-items:baseline;gap:6px;}
+  .stage-row h3 i{font-style:normal;font-size:12px;color:var(--faint);font-weight:400;letter-spacing:.02em;}
+  .stage-row p{margin:1px 0 0;font-size:13.2px;color:var(--muted);line-height:1.35;}
+
+  /* ---------- 闭环提示条 ---------- */
+  .loop-note{
+    margin-top:8px;flex:0 0 auto;background:var(--green-soft);border:1px solid var(--green-line);border-radius:10px;
+    padding:7px 10px;display:flex;align-items:center;gap:7px;
+  }
+  .loop-note svg{width:15px;height:15px;flex:0 0 auto;color:var(--green);}
+  .loop-note p{margin:0;font-size:13px;line-height:1.35;color:#28453A;}
+  .loop-note p b{color:var(--green);}
+
+  /* ---------- 面板 ---------- */
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:15px;padding:12px 14px;display:flex;flex-direction:column;min-height:0;}
+  .panel.white{background:#fff;}
+  .panel.lead{background:#EDF5F0;border-color:#B9D2C4;}
+  .p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex:0 0 auto;}
+  .p-head .sec-t{font-size:16.5px;}
+  .p-note{font-size:12.4px;color:var(--faint);text-align:right;line-height:1.35;}
+  .legend{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--muted);margin-top:2px;justify-content:flex-end;}
+  .legend i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:1px;}
+
+  /* 主图：固定高度，避免被下方内容挤变形 */
+  .loop-panel{flex:0 0 324px;height:324px;}
+  .loop-panel svg{display:block;width:100%;height:248px;margin-top:2px;}
+
+  .lower{flex:1;min-height:0;display:grid;grid-template-columns:1.03fr 1fr;gap:12px;}
+  .lower .panel{padding:10px 13px 8px;}
+  .grid6{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:6px;margin-top:6px;}
+
+  /* 六格卡：左侧 2px 竖条是唯一的重色装饰 */
+  .cell{background:#fff;border:1px solid var(--line);border-radius:9px;padding:5px 9px;display:flex;flex-direction:column;justify-content:center;min-height:0;position:relative;overflow:hidden;}
+  .cell::before{content:"";position:absolute;left:0;top:7px;bottom:7px;width:2px;border-radius:2px;background:var(--red);opacity:.5;}
+  .cell.g::before{background:var(--green);opacity:.55;}
+  .cell .k{font-family:var(--mono);font-size:10.6px;letter-spacing:.04em;color:var(--faint);white-space:nowrap;}
+  .cell h4{margin:1px 0 2px;font-size:14px;font-weight:650;line-height:1.2;}
+  .cell p{margin:0;font-size:12.4px;line-height:1.28;color:var(--muted);}
+
+  /* ---------- 页脚 ---------- */
+  footer{flex:0 0 36px;height:36px;margin-top:6px;display:flex;align-items:center;gap:14px;}
+  .brand-foot{flex:0 0 auto;font-size:11px;letter-spacing:.16em;color:var(--faint);line-height:1.3;font-weight:600;}
+  .brand-foot b{color:var(--muted);font-weight:700;margin-right:5px;}
+  /* 结论条：整页唯一允许的深色反白块 */
+  .conclusion{flex:1;height:44px;background:var(--green);border-radius:11px;display:flex;align-items:center;gap:10px;padding:0 16px;}
+  .conclusion span{flex:0 0 auto;font-size:11px;letter-spacing:.14em;color:#A8C4B5;font-weight:600;}
+  .conclusion strong{font-size:13px;color:#F4F2E9;font-weight:600;letter-spacing:.01em;line-height:1.3;}
+  .conclusion strong b{color:#F3B69F;font-weight:700;}
+  .formula{flex:0 0 auto;font-family:var(--mono);font-size:10.5px;color:var(--muted);white-space:nowrap;letter-spacing:-.2px;}
+  .formula b{color:var(--green);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="slide">
+
+    <div class="brand">
+      <img src="assets/novocube-logo.png" alt="novocube 新魔方">
+    </div>
+
+    <header>
+      <div class="eyebrow"><span class="bar"></span>{{眉标，用 · 分隔三到四段}}</div>
+      <h1>{{主标题}}，<em>{{需要强调的后半句}}</em></h1>
+      <div class="sub-wrap">
+        <p class="sub">{{一句话说清这页在论证什么}}</p>
+        <div class="rule"></div>
+      </div>
+    </header>
+
+    <!-- 01 流程条：五到六步，一步可用 .bad 标出需要人工/外部的环节 -->
+    <section class="flow-strip">
+      <div class="fs-label"><span>01 / {{流程名}}</span><strong>{{流程主线}}</strong></div>
+      <div class="fs-steps">
+        <div class="fs"><div class="fs-t">{{步骤 1}}</div><div class="fs-d">{{关键词}}</div></div>
+        <div class="fs-arrow">›</div>
+        <div class="fs"><div class="fs-t">{{步骤 2}}</div><div class="fs-d">{{关键词}}</div></div>
+        <div class="fs-arrow">›</div>
+        <div class="fs bad"><div class="fs-t">{{步骤 3}} <span class="tag-b">需人工</span></div><div class="fs-d">{{关键词}}</div></div>
+        <div class="fs-arrow">›</div>
+        <div class="fs"><div class="fs-t">{{步骤 4}}</div><div class="fs-d">{{关键词}}</div></div>
+        <div class="fs-loop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 0 1 13.7-3.7L20 8"/><path d="M20 4v4h-4"/><path d="M20 15a8 8 0 0 1-13.7 3.7L4 16"/><path d="M4 20v-4h4"/></svg>
+          <span>进入下一轮</span>
+        </div>
+      </div>
+    </section>
+
+    <main class="body">
+
+      <!-- 左栏：编号时间轴 -->
+      <section class="col-left">
+        <div class="sec-head">
+          <div class="sec-t"><span>02</span>{{左栏标题}}</div>
+          <div class="sec-n">{{条数说明}}</div>
+        </div>
+        <div class="stages">
+          <div class="stage-row t"><span class="num">0</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+          <div class="stage-row t"><span class="num">1</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+          <div class="stage-row t"><span class="num">2</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+          <div class="stage-row b"><span class="num">3</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+          <div class="stage-row b"><span class="num">4</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+          <div class="stage-row a"><span class="num">5</span><h3>{{阶段名}}<i>{{两字概括}}</i></h3><p>{{说明}}</p></div>
+        </div>
+      </section>
+
+      <!-- 右栏：主图 + 下方两栏 -->
+      <section class="col-right">
+        <div class="panel loop-panel">
+          <div class="p-head">
+            <div class="sec-t"><span>03</span>{{主图标题}}</div>
+          </div>
+          <svg viewBox="0 0 1020 250" xmlns="http://www.w3.org/2000/svg" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif">
+            <!-- 主图：手绘 SVG，见 SKILL.md「主图绘制」 -->
+            <text x="0" y="24" font-size="14" fill="#93968B">占位：替换为你的主图</text>
+          </svg>
+        </div>
+
+        <div class="lower">
+          <div class="panel white">
+            <div class="p-head"><div class="sec-t"><span>04</span>{{小卡标题}}</div></div>
+            <div class="grid6">
+              <div class="cell"><span class="k">01</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+              <div class="cell"><span class="k">02</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+              <div class="cell"><span class="k">03</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+              <div class="cell"><span class="k">04</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+              <div class="cell"><span class="k">05</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+              <div class="cell"><span class="k">06</span><h4>{{卡名}}</h4><p>{{说明}}</p></div>
+            </div>
+          </div>
+
+          <div class="panel lead">
+            <div class="p-head"><div class="sec-t"><span>05</span>{{结论面板标题}}</div></div>
+            <div class="loop-note">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9a8 8 0 0 1 13.7-3.7L20 8"/><path d="M20 4v4h-4"/><path d="M20 15a8 8 0 0 1-13.7 3.7L4 16"/><path d="M4 20v-4h4"/></svg>
+              <p>{{结论一句话}}<b>{{加重部分}}</b></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="brand-foot"><b>NOVOCUBE</b>{{角标第三行，用 · 分隔}}</div>
+      <div class="conclusion"><span>结论</span><strong>{{整页最该被记住的那句话，含 <b>强调</b>}}</strong></div>
+    </footer>
+
+  </div>
+</div>
+<script>
+  (function(){
+    var stage = document.getElementById('stage');
+    function fit(){
+      var s = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      stage.style.transform = 'scale(' + s + ')';
+    }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+</script>
+</body>
+</html>
